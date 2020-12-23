@@ -38,7 +38,7 @@ module.exports.register = async (req, res, next) => {
                 let gentoken = jwt.sign({ id: user.email }, process.env.JWT_SECRET);
                 let token = new Token({ _userId: user._id, token: gentoken });
                 //Sending email
-                var transporter = nodemailer.createTransport({ host: 'smtp-relay.sendinblue.com',port:'587', auth: { user: process.env.EMAIL, pass: process.env.PASSWORD } });
+                var transporter = nodemailer.createTransport({ host: 'smtp-relay.sendinblue.com', port: '587', auth: { user: process.env.EMAIL, pass: process.env.PASSWORD } });
                 var mailOptions = { from: process.env.EMAIL_FROM, to: user.email, subject: 'Account Verification Link', text: 'Hello ' + req.body.email + ',\n\n' + 'Please verify your account by clicking the link: \nhttp:\/\/' + req.headers.host + '\/v1\/verify\/' + user.email + '\/' + token.token + '\n\nThank You!\nXP-COVER' };
                 transporter.sendMail(mailOptions, (error) => {
                     if (error) {
@@ -361,6 +361,70 @@ module.exports.getlicenseNo = async (req, res, next) => {
                 )
             );
     } catch (error) {
+        return res
+            .status(statusCode.error)
+            .json(
+                returnErrorJsonResponse(
+                    statusCode.error,
+                    "fail",
+                    "Something went wrong, Please try again",
+                    error
+                )
+            );
+    }
+};
+
+module.exports.compareLicenseNo = async (req, res, next) => {
+    try {
+        if (!req.body.licenseNo) {
+            return res
+                .status(statusCode.bad)
+                .json(
+                    returnErrorJsonResponse(
+                        statusCode.nocontent,
+                        "fail",
+                        "Please enter all the required fileds",
+                    )
+                );
+        }
+        await UserMaster.findOne({ licenseNo: req.body.licenseNo }, (error, user) => {
+            if (error) {
+                return res
+                    .status(statusCode.bad)
+                    .json(
+                        returnErrorJsonResponse(
+                            statusCode.bad,
+                            "fail",
+                            "Something went wrong, Please try again",
+                            error
+                        )
+                    );
+            }
+            else if (!user) {
+                return res
+                    .status(statusCode.unauthorized)
+                    .json(
+                        returnErrorJsonResponse(
+                            statusCode.unauthorized,
+                            "fail",
+                            "We were unable to find the entered License Number."
+                        )
+                    );
+            } else {
+                return res
+                    .status(statusCode.success)
+                    .json(
+                        returnJsonResponse(
+                            statusCode.success,
+                            "success",
+                            "Your License Number has been successfully verified.",
+                            user
+                        )
+                    );
+            }
+        })
+    } catch (error) {
+        console.log(error)
         return res
             .status(statusCode.error)
             .json(
