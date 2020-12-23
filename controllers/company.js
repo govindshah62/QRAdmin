@@ -187,7 +187,9 @@ module.exports.verify = async (req, res, next) => {
                     else {
                         let crypt = {
                             email: req.params.email,
-                            option: user.option
+                            option: user.option,
+                            companyName:user.companyName,
+                            expiryDate: new Date(+user.createdAt+365*24*60*60*1000)
                         };
                         let hash = await encrypt(JSON.stringify(crypt));
                         const salt = await bcrypt.genSalt(10);
