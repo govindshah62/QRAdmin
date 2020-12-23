@@ -8,6 +8,17 @@ const { statusCode, returnJsonResponse, returnErrorJsonResponse } = require("../
 
 module.exports.register = async (req, res, next) => {
     try {
+        if (!req.body.email || !req.body.option || !req.body.companyName) {
+            return res
+                .status(statusCode.bad)
+                .json(
+                    returnErrorJsonResponse(
+                        statusCode.nocontent,
+                        "fail",
+                        "Please enter all the required fileds",
+                    )
+                );
+        }
         UserMaster.findOne({ email: req.body.email }, async (error, user) => {
             if (error) {
                 return res
@@ -236,7 +247,7 @@ module.exports.login = async (req, res, next) => {
         const { email, password } = req.body;
         if (!email || !password) {
             return res
-                .status(statusCode.nocontent)
+                .status(statusCode.bad)
                 .json(
                     returnErrorJsonResponse(
                         statusCode.nocontent,
@@ -349,6 +360,17 @@ module.exports.getAdminUsers = async (req, res, next) => {
 
 module.exports.getlicenseNo = async (req, res, next) => {
     try {
+        if (!req.body.email) {
+            return res
+                .status(statusCode.bad)
+                .json(
+                    returnErrorJsonResponse(
+                        statusCode.nocontent,
+                        "fail",
+                        "Please enter all the required fileds",
+                    )
+                );
+        }
         const user = await UserMaster.findOne({ email: req.body.email });
         return res
             .status(statusCode.success)
