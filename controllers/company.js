@@ -39,7 +39,7 @@ module.exports.register = async (req, res, next) => {
                 let token = new Token({ _userId: user._id, token: gentoken });
                 //Sending email
                 var transporter = nodemailer.createTransport({ host: 'smtp-relay.sendinblue.com',port:'587', auth: { user: process.env.EMAIL, pass: process.env.PASSWORD } });
-                var mailOptions = { from: process.env.EMAIL_FROM, to: user.email, subject: 'Account Verification Link', text: 'Hello ' + req.body.email + ',\n\n' + 'Please verify your account by clicking the link: \nhttp:\/\/' + req.headers.host + '\/v1\/verify\/' + user.email + '\/' + token.token + '\n\nThank You!\n' };
+                var mailOptions = { from: process.env.EMAIL_FROM, to: user.email, subject: 'Account Verification Link', text: 'Hello ' + req.body.email + ',\n\n' + 'Please verify your account by clicking the link: \nhttp:\/\/' + req.headers.host + '\/v1\/verify\/' + user.email + '\/' + token.token + '\n\nThank You!\nXP-COVER' };
                 transporter.sendMail(mailOptions, (error) => {
                     if (error) {
                         return res
