@@ -5,6 +5,7 @@ const UserMaster = require('../models/MasterUser');
 const Token = require('../models/Token');
 const { encrypt, getRandomString } = require('../Helpers/crypto');
 const { statusCode, returnJsonResponse, returnErrorJsonResponse } = require("../Helpers/status.js");
+require('dotenv').config({path:'../config.env'});
 
 module.exports.register = async (req, res, next) => {
     try {
